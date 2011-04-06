@@ -1,0 +1,13 @@
+Softwareprojekt: Chatprogramm ähnlich IRC
+
+geplante Features:
+-Multichatprogramm
+-Server und Client
+-Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
+-Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
+-Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
+-Statusabfrage (Wer ist gerade online?)
+
+Bugs:
+-Sonderzeichen funktionieren nicht
+-Eingaben mit ? und ! werden doppelt angezeigt (evtl. auch bei anderen Zeichen)
