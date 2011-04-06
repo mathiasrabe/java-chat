@@ -1,152 +1,84 @@
 import java.net.*;
+import java.util.*; //Eingabe über Konsole & Vector
+
 //import java.util.Vector;
 import java.io.*;
-import java.awt.*;
-import java.applet.*;
-import java.awt.event.*;
+//import java.awt.*;
+//import java.applet.*;
+//import java.awt.event.*;
 
-public class client extends Applet implements WindowListener
+public class client implements Runnable
 {
 	public static final int PORT = 8765;
 	Socket socket;
-	DataInputStream in;
-	PrintStream out;
-	TextField inputfield;
-	TextArea outputarea;
-	Thread thread;
-	Frame myframe;
+	//DataInputStream in;
+	//PrintStream out;
+	Scanner in;
+	private volatile Thread connect;
+	String consoleinput;
 
-	public void init()
+	
+	public client()
 	{
-		inputfield = new TextField();
-		outputarea = new TextArea();
-		outputarea.setFont( new Font("Dialog", Font.PLAIN, 12));
-		outputarea.setEditable(false);
-
-		//myframe.setLayout(new BorderLayout());
-		myframe.add("South", inputfield);
-		myframe.add("Center", outputarea);
-
-		myframe.setBackground(Color.lightGray);
-		myframe.setForeground(Color.black);
-		inputfield.setBackground(Color.white);
-		outputarea.setBackground(Color.white);
-	}
-
-	public void start()
-	{
+		in = new Scanner(System.in);
+		System.out.println("Bitte geben Sie eine IP-Adresse ein:");
+		String input = in.nextLine();
+		// TODO Die Variable input muss auf Richtigkeit überprüft werden!
+		
 		try
 		{
-			//socket = new Socket(this.getCodeBase().getHost(), PORT);
-			socket = new Socket("localhost", PORT);
-			in = new DataInputStream(socket.getInputStream());
-			out = new PrintStream(socket.getOutputStream());
+			socket = new Socket( input, PORT);
 		} catch (IOException e)
 		{
-			this.showStatus(e.toString());
-			say("Verbindung zum Server fehlgeschlagen!");
-			System.out.println("Verbindung fehlgeschlagen!"); // TODO
+			System.err.println("Verbindung fehlgeschlagen:"+ e); // TODO
 			System.exit(1);
 		}
-
-		say("Verbindung zum Server aufgenommen...");
-/*
-		if (thread == null)
-		{
-			thread = new Thread(this);
-			thread.setPriority(Thread.MIN_PRIORITY);
-			thread.start();
-		}*/
+		
+		connect = new Thread(this);
+		connect.start();
 	}
-
-
+	
 	public void stop()
 	{
-		System.out.println("Schließe Verbindung"); // TODO
-		try
-		{
-			socket.close();
-		} catch (IOException e)
-		{
-			this.showStatus(e.toString());
-		}
-
-		if ((thread !=null) && thread.isAlive())
-		{
-			thread.stop();
-			thread = null;
-		}
+		// Zeugs um Thread zu stoppen / Funktioniert irgendwie nicht?!
+		System.out.println("Stop this Thread!");
+		Thread moribund = connect;
+		connect = null;
+		moribund.interrupt();
 	}
-
-
+	
 	public void run()
 	{
-		String line;
-
-		try
-		{
-			while(true)
-			{
-				line = in.readLine();
-				if(line!=null)
-					outputarea.appendText(line+'\n' );
+		//consoleinput = new String();
+		
+		connection_client c = new connection_client(socket, this);
+		
+		// Zeugs um Thread zu stoppen
+		// siehe auch http://download.oracle.com/javase/1.5.0/docs/guide/misc/threadPrimitiveDeprecation.html
+		Thread thisThread = Thread.currentThread();
+		while (connect == thisThread) {
+			//Abfrage der Konsoleneingabe
+			consoleinput = in.nextLine();
+						
+			c.out.println( consoleinput );
+			
+			if(consoleinput.matches("/quit")) {
+				stop();
 			}
-		} catch (IOException e) { say("Verbindung zum Server abgebrochen"); }
-	}
-
-
-	public boolean action(Event e, Object what)
-	{
-		if (e.target==inputfield)
-		{
-			String inp=(String) e.arg;
-
-			out.println(inp);
-			inputfield.setText("");
-			return true;
 		}
-
-		return false;
 	}
 	
-	// TODO wie bekommt man das lauffähig?
-	public void main(String[] args)
+	public static void main(String[] args)
 	{
-		client c = new client();
-		myframe = new Frame("Hermes-Chat-Client");
-		c.init();
-		myframe.addWindowListener(c);
-		myframe.setVisible(true);
-		c.start();
+		new client();
 	}
 	
-	public void windowClosing (WindowEvent e) {
-	    this.stop();
-	    this.destroy();
-	    System.exit(0);
-    }
-	
-	public void windowDeactivated(WindowEvent e) {	
-	}
-	
-	public void windowDeiconified(WindowEvent e) {
-	}
-	
-	public void windowOpened(WindowEvent e) {
-	}
-	
-	public void windowIconified(WindowEvent e) {
-	}
-	
-	public void windowClosed(WindowEvent e) {
-	}
-	
-	public void windowActivated(WindowEvent e) {
-	}
-
-
-	public void say(String msg)
+	public void display(String line)
 	{
-		outputarea.appendText("*** "+msg+" ***\n");
+		if ( !consoleinput.matches( line ) ) {
+			// könnte blöd werden, wenn anderer Teilnehmer das gleiche schreibt
+			System.out.println(line);
+			consoleinput = "";
+		}
 	}
 }

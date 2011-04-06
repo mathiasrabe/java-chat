@@ -6,21 +6,23 @@ public class server implements Runnable
 {
 	public static final int PORT = 8765;
 	protected ServerSocket listen;
-	protected Vector connections;
+	protected Vector<connection> connections;
 	Thread connect;
 
 	public server()
 	{
+		System.out.println("Server wird gestartet ...");
+        
 		try
 		{
 			listen = new ServerSocket(PORT);
 		} catch (IOException e)
 		{
-			System.err.println("Fehler beim Erzeugen der Sockets:"+e);
+			System.err.println("Fehler beim Erzeugen der Sockets: "+e);
 			System.exit(1);
 		}
 
-		connections = new Vector();
+		connections = new Vector<connection>();
 
 		connect = new Thread(this);
 		connect.start();
@@ -33,13 +35,15 @@ public class server implements Runnable
 			while(true)
 			{
 				Socket client=listen.accept();
+				
+				System.out.println("Eingehende Verbindung...");
 
 				connection c = new connection(this, client);
 				connections.addElement(c);
 			}
 		} catch (IOException e)
 		{
-			System.err.println("Fehler beim Warten auf Verbindungen:"+e);
+			System.err.println("Fehler beim Warten auf Verbindungen: "+e);
 			System.exit(1);
 		}
 	}
@@ -56,6 +60,7 @@ public class server implements Runnable
 
 		for (i=0; i<connections.size(); i++)
 		{
+			//System.out.println("Nachricht verschicken!");
 			you = (connection) connections.elementAt(i);
 			you.out.println(msg);
 		}
