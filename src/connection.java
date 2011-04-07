@@ -4,9 +4,10 @@ import java.io.*;
 class connection extends Thread
 {
 	protected Socket client;
-	protected DataInputStream in;
+	protected BufferedReader in;
 	protected PrintStream out;
 	protected server server;
+	protected String nickname;
 
 	public connection(server server, Socket client)
 	{
@@ -15,7 +16,7 @@ class connection extends Thread
 
 		try
 		{
-			in = new DataInputStream(client.getInputStream());
+			in = new BufferedReader(new InputStreamReader( client.getInputStream() ));
 			out = new PrintStream(client.getOutputStream());
 		} catch (IOException e)
 		{
@@ -37,8 +38,15 @@ class connection extends Thread
 			while(true)
 			{
 				line=in.readLine();
+				System.out.println(line); // TODO ein geschlossener Client schickt hier ne Menge null's
 				if(line!=null)
-					server.broadcast(line);
+					if(line.startsWith("/name ")) {
+						nickname = line.substring(6);
+						System.out.println("Nickname: " + nickname);
+						// TODO hier könnten alle anderen Serverbefehle hin
+					} else {
+						server.broadcast(line);
+					}
 			}
 		} catch (IOException e)
 		{

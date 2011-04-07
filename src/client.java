@@ -1,5 +1,5 @@
 import java.net.*;
-import java.util.*; //Eingabe über Konsole & Vector
+import java.util.*; //Bib für Eingabe über Konsole & Vector
 
 //import java.util.Vector;
 import java.io.*;
@@ -16,6 +16,7 @@ public class client implements Runnable
 	Scanner in;
 	private volatile Thread connect;
 	String consoleinput;
+	String username;
 
 	
 	public client()
@@ -24,13 +25,20 @@ public class client implements Runnable
 		System.out.println("Bitte geben Sie eine IP-Adresse ein:");
 		String input = in.nextLine();
 		// TODO Die Variable input muss auf Richtigkeit überprüft werden!
+		System.out.println("Bitte geben Sie Ihren Nickname ein:");
+		do {
+			if (username != null && username.contains(" "))
+				System.out.println("In Ihrem Benutzernamen darf kein Leerzeichen enthalten sein." +
+						           " Bitte geben Sie erneut ein:");
+			username = in.nextLine();
+		} while( username == null || username.contains(" ") );
 		
 		try
 		{
 			socket = new Socket( input, PORT);
 		} catch (IOException e)
 		{
-			System.err.println("Verbindung fehlgeschlagen:"+ e); // TODO
+			System.err.println("Verbindung fehlgeschlagen:"+ e);
 			System.exit(1);
 		}
 		
@@ -40,7 +48,7 @@ public class client implements Runnable
 	
 	public void stop()
 	{
-		// Zeugs um Thread zu stoppen / Funktioniert irgendwie nicht?!
+		// TODO Zeugs um Thread zu stoppen / Funktioniert irgendwie nicht?!
 		System.out.println("Stop this Thread!");
 		Thread moribund = connect;
 		connect = null;
@@ -48,10 +56,8 @@ public class client implements Runnable
 	}
 	
 	public void run()
-	{
-		//consoleinput = new String();
-		
-		connection_client c = new connection_client(socket, this);
+	{		
+		connection_client c = new connection_client(socket, this, username);
 		
 		// Zeugs um Thread zu stoppen
 		// siehe auch http://download.oracle.com/javase/1.5.0/docs/guide/misc/threadPrimitiveDeprecation.html
@@ -75,10 +81,13 @@ public class client implements Runnable
 	
 	public void display(String line)
 	{
-		if ( !consoleinput.matches( line ) ) {
-			// könnte blöd werden, wenn anderer Teilnehmer das gleiche schreibt
-			System.out.println(line);
-			consoleinput = "";
+		if (consoleinput != null) {
+			if ( !consoleinput.matches( line ) ) {
+				// könnte blöd werden, wenn anderer Teilnehmer das gleiche schreibt
+				// mit Benutzernamen im String dürfte die Filterung einfacher werden
+				System.out.println(line);
+				consoleinput = "";
+			}
 		}
 	}
 }

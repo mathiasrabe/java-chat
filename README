@@ -9,5 +9,4 @@ geplante Features:
 -Statusabfrage (Wer ist gerade online?)
 
 Bugs:
--Sonderzeichen funktionieren nicht
--Eingaben mit ? und ! werden doppelt angezeigt (evtl. auch bei anderen Zeichen)
+-Clients disconnecten nicht ordentlich
