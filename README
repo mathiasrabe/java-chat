@@ -11,3 +11,4 @@ geplante Features:
 Bugs:
 -IP Adresse wird nicht überprüft
 -Benutzernamen sind Momentan noch nutzlos
+-Probleme mit meta characters (regex) z.B. \ ? *
