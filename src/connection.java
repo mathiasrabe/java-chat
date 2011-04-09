@@ -8,6 +8,7 @@ class connection extends Thread
 	protected PrintStream out;
 	protected server server;
 	protected String nickname;
+	private volatile Thread connect;
 
 	public connection(server server, Socket client)
 	{
@@ -25,32 +26,63 @@ class connection extends Thread
 			return;
 		}
 
-		this.start();
+		connect = new Thread(this);
+		connect.start();
+	}
+	
+	public void done()
+	{
+		// Zeugs um Thread zu stoppen
+		System.out.println("Stop the connection Thread!");
+		
+		try {
+			client.close();
+		} catch (IOException e) {
+			System.err.println("Fehler beim Schließen der Verbindung: " + e);
+		}
+		
+		server.removeconnection(this);
+		
+		Thread moribund = connect;
+		connect = null;
+		moribund.interrupt();
 	}
 
 
 	public void run()
 	{
 		String line;
+		Thread thisThread = Thread.currentThread();
 
-		try
+		// TODO mal ordentlichen Code draus machen
+
+		while(connect == thisThread)
 		{
-			while(true)
-			{
+			try {
 				line=in.readLine();
-				System.out.println(line); // TODO ein geschlossener Client schickt hier ne Menge null's
-				if(line!=null)
-					if(line.startsWith("/name ")) {
-						nickname = line.substring(6);
-						System.out.println("Nickname: " + nickname);
-						// TODO hier könnten alle anderen Serverbefehle hin
-					} else {
-						server.broadcast(line);
-					}
+			} catch (IOException e) {
+				System.out.println("Fehler: " + e);
+				this.done(); // funktioniert das hier?
+				break; // sicher ist sicher?
 			}
-		} catch (IOException e)
-		{
-			System.out.println("Fehler:" + e);
+			
+			if(line == null) {
+				System.out.println("Verbindungsfehler - beende Verbindung");
+				this.done();
+			} else if( line.startsWith("/") ) {
+				if(line.startsWith("/name ")) {
+					nickname = line.substring(6);
+					System.out.println("Nickname: " + nickname);
+					// TODO hier könnten alle anderen Serverbefehle hin
+				} else if(line.startsWith("/quit")) {
+					this.done();
+				} else {
+					// TODO an Absender zurück: Unbekannter Befehl
+				}
+			} else {
+				System.out.println(line); //könnte gelöscht werden
+				server.broadcast(line);
+			}
 		}
 	}
 }

@@ -27,6 +27,8 @@ public class server implements Runnable
 		connect = new Thread(this);
 		connect.start();
 	}
+	
+	//public void done()
 
 	public void run()
 	{
@@ -64,5 +66,10 @@ public class server implements Runnable
 			you = (connection) connections.elementAt(i);
 			you.out.println(msg);
 		}
+	}
+	
+	public void removeconnection(connection c)
+	{
+		connections.removeElement(c);
 	}
 }

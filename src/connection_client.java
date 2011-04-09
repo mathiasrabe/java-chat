@@ -7,6 +7,7 @@ class connection_client extends Thread
 	protected BufferedReader in;
 	protected PrintStream out;
 	protected client client;
+	private volatile Thread connect;
 	
 	public connection_client(Socket server, client client, String username)
 	{
@@ -27,24 +28,42 @@ class connection_client extends Thread
 		// Anmeldung beim Server mit Benutzername
 		out.println("/name " + username);
 
-		this.start();
+		connect = new Thread(this);
+		connect.start();
+	}
+	
+	public void done()
+	{
+		// Zeugs um Thread zu stoppen
+		out.println("/quit"); //abmelden beim Server
+		try {
+			server.close();
+		} catch (IOException e) {
+			System.err.println("Fehler beim Schließen der Verbindung: " + e);
+		}
+		
+		Thread moribund = connect;
+		connect = null;
+		moribund.interrupt();
 	}
 	
 	public void run()
 	{
 		String line;
+		Thread thisThread = Thread.currentThread();
 
 		try
 		{
-			while(true)
+			while (connect == thisThread)
 			{
 				line=in.readLine();
 				if(line!=null)
 					client.display(line);
 			}
-		} catch (IOException e)
+		} catch(IOException e)
 		{
-			System.out.println("Fehler:" + e);
+			if (!server.isClosed())
+				System.out.println("Fehler: " + e);
 		}
 	}
 }

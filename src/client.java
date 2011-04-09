@@ -46,10 +46,9 @@ public class client implements Runnable
 		connect.start();
 	}
 	
-	public void stop()
+	public void done()
 	{
-		// TODO Zeugs um Thread zu stoppen / Funktioniert irgendwie nicht?!
-		System.out.println("Stop this Thread!");
+		// Zeugs um Thread zu stoppen
 		Thread moribund = connect;
 		connect = null;
 		moribund.interrupt();
@@ -69,9 +68,12 @@ public class client implements Runnable
 			c.out.println( consoleinput );
 			
 			if(consoleinput.matches("/quit")) {
-				stop();
+				//alle Threads beenden
+				c.done();
+				this.done();
 			}
 		}
+		System.out.println("bye bye ...");
 	}
 	
 	public static void main(String[] args)

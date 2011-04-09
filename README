@@ -9,5 +9,5 @@ geplante Features:
 -Statusabfrage (Wer ist gerade online?)
 
 Bugs:
--Clients disconnecten nicht ordentlich -> Server schmeißt mit null's um sich
 -IP Adresse wird nicht überprüft
+-Benutzernamen sind Momentan noch nutzlos
