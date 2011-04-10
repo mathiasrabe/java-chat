@@ -7,8 +7,9 @@ geplante Features:
 -Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
 -Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
 -Statusabfrage (Wer ist gerade online?)
+-/me Funktion
 
 Bugs:
 -IP Adresse wird nicht überprüft
 -Benutzernamen sind Momentan noch nutzlos
--Probleme mit meta characters (regex) z.B. \ ? *
+-Eingaben werden doppelt angezeigt

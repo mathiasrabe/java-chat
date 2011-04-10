@@ -11,8 +11,6 @@ public class client implements Runnable
 {
 	public static final int PORT = 8765;
 	Socket socket;
-	//DataInputStream in;
-	//PrintStream out;
 	Scanner in;
 	private volatile Thread connect;
 	String consoleinput;
@@ -31,7 +29,7 @@ public class client implements Runnable
 				System.out.println("In Ihrem Benutzernamen darf kein Leerzeichen enthalten sein." +
 						           " Bitte geben Sie erneut ein:");
 			username = in.nextLine();
-		} while( username == null || username.contains(" ") );
+		} while( username.isEmpty() || username.contains(" ") );
 		
 		try
 		{
@@ -83,13 +81,10 @@ public class client implements Runnable
 	
 	public void display(String line)
 	{
-		if (consoleinput != null) {
-			if ( !consoleinput.matches( line ) ) {
-				// könnte blöd werden, wenn anderer Teilnehmer das gleiche schreibt
-				// mit Benutzernamen im String dürfte die Filterung einfacher werden
-				System.out.println(line);
-				consoleinput = "";
-			}
+		if ( !line.startsWith(username) ) {
+			//TODO Der Server sollte dann auch Daten schicken die mit 
+			// dem Benutzernamen beginnen: USERNAME: hallo
+			System.out.println(line);
 		}
 	}
 }
