@@ -54,8 +54,6 @@ class connection extends Thread
 		String line;
 		Thread thisThread = Thread.currentThread();
 
-		// TODO mal ordentlichen Code draus machen
-
 		while(connect == thisThread)
 		{
 			try {
