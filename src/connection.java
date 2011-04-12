@@ -25,9 +25,28 @@ class connection extends Thread
 			System.err.println("Fehler beim Erzeugen der Streams: " + e);
 			return;
 		}
+		
+		// zufälligen Benutzernamen erstellen und testen ob schon vorhanden
+		String newnick;
+		do {
+			newnick = "USER" + (int) (Math.random() * 1000);
+		} while( server.userexists(newnick) );
+		nickname = newnick;
+		
+		System.out.println(nickname);
 
 		connect = new Thread(this);
 		connect.start();
+	}
+	
+	public void sendServerMsg(String line)
+	{
+		out.println("*** "+ line + " ***");
+	}
+	
+	public String getNickname()
+	{
+		return nickname;
 	}
 	
 	public void done()
@@ -53,6 +72,8 @@ class connection extends Thread
 	{
 		String line;
 		Thread thisThread = Thread.currentThread();
+		
+	sendServerMsg("Willkommen auf dem Server");
 
 		while(connect == thisThread)
 		{
@@ -69,8 +90,16 @@ class connection extends Thread
 				this.done();
 			} else if( line.startsWith("/") ) {
 				if(line.startsWith("/name ")) {
-					nickname = line.substring(6);
-					System.out.println("Nickname: " + nickname);
+					String newnick = line.substring(6);
+					if(newnick.contains(" ")) {
+						sendServerMsg("Name Darf keine Leerzeichen enthalten");
+					} else if (server.userexists( newnick )) {
+						sendServerMsg("Name schon vergeben");
+					} else {
+						nickname = newnick;
+						sendServerMsg("Ihr Benutzername lautet " + nickname);
+						System.out.println("Nickname: " + nickname);
+					}
 					// TODO hier könnten alle anderen Serverbefehle hin
 				} else if(line.startsWith("/quit")) {
 					this.done();
@@ -78,8 +107,8 @@ class connection extends Thread
 					// TODO an Absender zurück: Unbekannter Befehl
 				}
 			} else {
-				System.out.println(line); //könnte gelöscht werden
-				server.broadcast(line);
+				System.out.println(nickname + ": " + line); //könnte gelöscht werden
+				server.broadcast(nickname + ": " + line);
 			}
 		}
 	}

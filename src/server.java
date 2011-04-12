@@ -72,4 +72,19 @@ public class server implements Runnable
 	{
 		connections.removeElement(c);
 	}
+	
+	public boolean userexists(String name)
+	{
+		int i;
+		connection you;
+
+		for (i=0; i<connections.size(); i++)
+		{
+			you = (connection) connections.elementAt(i);
+			if( you.getNickname().equals(name) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
