@@ -30,10 +30,8 @@ class connection extends Thread
 		String newnick;
 		do {
 			newnick = "USER" + (int) (Math.random() * 1000);
-		} while( server.userexists(newnick) );
+		} while( server.userexists(newnick) || newnick.equals("Server") );
 		nickname = newnick;
-		
-		System.out.println(nickname);
 
 		connect = new Thread(this);
 		connect.start();
@@ -41,7 +39,7 @@ class connection extends Thread
 	
 	public void sendServerMsg(String line)
 	{
-		out.println("*** "+ line + " ***");
+		out.println("Server: "+ line);
 	}
 	
 	public String getNickname()
@@ -66,14 +64,42 @@ class connection extends Thread
 		connect = null;
 		moribund.interrupt();
 	}
-
+	
+	private void filterOptions( String line)
+	{
+		if(line.startsWith("name ")) {
+			String newnick = line.substring(5);
+			if(newnick.contains(" ")) {
+				sendServerMsg("Name Darf keine Leerzeichen enthalten");
+			} else if (server.userexists( newnick ) || newnick.equals("Server") ) {
+				sendServerMsg("Name schon vergeben");
+			} else {
+				nickname = newnick;
+				sendServerMsg("Ihr Benutzername lautet " + nickname);
+				System.out.println("Nickname: " + nickname);
+			}
+			// TODO hier könnten alle anderen Serverbefehle hin
+		} else if(line.startsWith("quit")) {
+			this.done();
+		}else if(line.startsWith("help")) {
+			sendServerMsg("Serverbefehle:");
+			sendServerMsg("/name benutzername");
+			sendServerMsg("   neuen Benutzernamen setzen");
+			sendServerMsg("/quit");
+			sendServerMsg("   Server verlassen und Client beenden");
+			sendServerMsg("/help");
+			sendServerMsg("   zeigt diese Hilfe an");
+		} else {
+			sendServerMsg("Unbekannter Befehl");
+		}
+	}
 
 	public void run()
 	{
 		String line;
 		Thread thisThread = Thread.currentThread();
 		
-	sendServerMsg("Willkommen auf dem Server");
+		sendServerMsg("Willkommen auf dem Server");
 
 		while(connect == thisThread)
 		{
@@ -89,23 +115,7 @@ class connection extends Thread
 				System.out.println("Verbindungsfehler - beende Verbindung");
 				this.done();
 			} else if( line.startsWith("/") ) {
-				if(line.startsWith("/name ")) {
-					String newnick = line.substring(6);
-					if(newnick.contains(" ")) {
-						sendServerMsg("Name Darf keine Leerzeichen enthalten");
-					} else if (server.userexists( newnick )) {
-						sendServerMsg("Name schon vergeben");
-					} else {
-						nickname = newnick;
-						sendServerMsg("Ihr Benutzername lautet " + nickname);
-						System.out.println("Nickname: " + nickname);
-					}
-					// TODO hier könnten alle anderen Serverbefehle hin
-				} else if(line.startsWith("/quit")) {
-					this.done();
-				} else {
-					// TODO an Absender zurück: Unbekannter Befehl
-				}
+				filterOptions( line.substring(1) );
 			} else {
 				System.out.println(nickname + ": " + line); //könnte gelöscht werden
 				server.broadcast(nickname + ": " + line);

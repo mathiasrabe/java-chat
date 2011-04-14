@@ -3,9 +3,10 @@ import java.util.*; //Bib für Eingabe über Konsole & Vector
 
 //import java.util.Vector;
 import java.io.*;
-//import java.awt.*;
-//import java.applet.*;
-//import java.awt.event.*;
+
+import com.google.api.detect.Detect;
+import com.google.api.translate.Language;
+import com.google.api.translate.Translate;
 
 public class client implements Runnable
 {
@@ -79,12 +80,46 @@ public class client implements Runnable
 		new client();
 	}
 	
+	/**
+	 * 
+	 * @param String - der zu übersetzende Text
+	 * @return übersetzer Text, oder leerer String, wenn nicht erfolgreich
+	 */
+	private String translate(String text)
+	{
+		Translate.setHttpReferrer("moep.de"); // wozu?
+		Language lang = null;
+		String translatedText = new String();
+		
+		// Spracherkennung
+		try {
+			lang = Detect.execute(text).getLanguage();
+		} catch (Exception e) {
+			System.err.println("Error 1: " + e);
+			return translatedText;
+		}
+		
+		//Übersetze Text
+		try {
+			translatedText = Translate.execute(text, lang, Language.ENGLISH);
+			// FIXME Alles ins Englische übersetzen? bäää...
+		} catch (Exception e) {
+			System.err.println("Error 2: " + e);
+		}
+		
+		return translatedText;
+		
+	}
+	
 	public void display(String line)
 	{
 		if ( !line.startsWith(username) ) {
-			//TODO Der Server sollte dann auch Daten schicken die mit 
-			// dem Benutzernamen beginnen: USERNAME: hallo
-			System.out.println(line);
+			String newtext = translate(line);
+			if ( !newtext.isEmpty() ) {
+				System.out.println(newtext);
+			} else {
+				System.out.println(line);
+			}
 		}
 	}
 }

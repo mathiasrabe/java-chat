@@ -1,6 +1,10 @@
 import java.net.*;
 import java.io.*;
 
+import com.google.api.detect.Detect;
+import com.google.api.translate.Language;
+import com.google.api.translate.Translate;
+
 class connection_client extends Thread
 {
 	protected Socket server;
@@ -57,7 +61,7 @@ class connection_client extends Thread
 			while (connect == thisThread)
 			{
 				line=in.readLine();
-				if(line!=null)
+				if(line!=null)					
 					client.display(line);
 			}
 		} catch(IOException e)
