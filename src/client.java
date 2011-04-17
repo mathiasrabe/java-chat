@@ -11,11 +11,11 @@ import com.google.api.translate.Translate;
 public class client implements Runnable
 {
 	public static final int PORT = 8765;
-	Socket socket;
-	Scanner in;
+	protected Socket socket;
+	protected Scanner in;
 	private volatile Thread connect;
-	String consoleinput;
-	String username;
+	private String consoleinput;
+	public String username;
 
 	
 	public client()
