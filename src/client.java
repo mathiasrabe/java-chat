@@ -82,7 +82,7 @@ public class client implements Runnable
 	
 	/**
 	 * 
-	 * @param String - der zu übersetzende Text
+	 * @param text der zu übersetzende Text
 	 * @return übersetzer Text, oder leerer String, wenn nicht erfolgreich
 	 */
 	private String translate(String text)
@@ -95,7 +95,7 @@ public class client implements Runnable
 		try {
 			lang = Detect.execute(text).getLanguage();
 		} catch (Exception e) {
-			System.err.println("Error 1: " + e);
+			System.err.println("Fehler bei Spracherkennung: " + e);
 			return translatedText;
 		}
 		
@@ -104,7 +104,7 @@ public class client implements Runnable
 			translatedText = Translate.execute(text, lang, Language.ENGLISH);
 			// FIXME Alles ins Englische übersetzen? bäää...
 		} catch (Exception e) {
-			System.err.println("Error 2: " + e);
+			System.err.println("Fehler bei Überstzung: " + e);
 		}
 		
 		return translatedText;

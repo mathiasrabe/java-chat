@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 class connection extends Thread
 {
@@ -30,7 +31,7 @@ class connection extends Thread
 		String newnick;
 		do {
 			newnick = "USER" + (int) (Math.random() * 1000);
-		} while( server.userexists(newnick) || newnick.equals("Server") );
+		} while( server.userExists(newnick) || newnick.equals("Server") );
 		nickname = newnick;
 
 		connect = new Thread(this);
@@ -50,28 +51,32 @@ class connection extends Thread
 	public void done()
 	{
 		// Zeugs um Thread zu stoppen
-		System.out.println("Stop the connection Thread!");
-		
+		System.out.println("Stop the connection Thread of " + nickname);
+
 		try {
 			client.close();
 		} catch (IOException e) {
 			System.err.println("Fehler beim Schließen der Verbindung: " + e);
 		}
 		
-		server.removeconnection(this);
+		server.removeConnection(this);
 		
 		Thread moribund = connect;
 		connect = null;
 		moribund.interrupt();
 	}
 	
+	/**
+	 * 
+	 * @param line String mit zu überprüfender Optionen - Slash am Anfang entfernen
+	 */
 	private void filterOptions( String line)
 	{
 		if(line.startsWith("name ")) {
 			String newnick = line.substring(5);
 			if(newnick.contains(" ")) {
 				sendServerMsg("Name Darf keine Leerzeichen enthalten");
-			} else if (server.userexists( newnick ) || newnick.equals("Server") ) {
+			} else if (server.userExists( newnick ) || newnick.equals("Server") ) {
 				sendServerMsg("Name schon vergeben");
 			} else {
 				nickname = newnick;
@@ -79,9 +84,29 @@ class connection extends Thread
 				System.out.println("Nickname: " + nickname);
 			}
 			// TODO hier könnten alle anderen Serverbefehle hin
+		} else if(line.startsWith("who")) {
+			Vector<String> namelist = server.getUserNames();
+			if(namelist.isEmpty()) {
+				sendServerMsg("Keine Benutzer online");
+				return;
+			}
+			sendServerMsg(namelist.size() + " Personen im Chat:");
+			String names = new String();
+			for( int i = 0; i < namelist.size(); i++ ) {
+				names += namelist.elementAt(i);
+				if ( i < namelist.size() - 1 ) {
+					names += ", ";
+					if ( names.length() > 40 ) {
+						// neue Zeile anfangen
+						sendServerMsg(names);
+						names = "";
+					}
+				}
+			}
+			sendServerMsg(names);
 		} else if(line.startsWith("quit")) {
 			this.done();
-		}else if(line.startsWith("help")) {
+		} else if(line.startsWith("help")) {
 			sendServerMsg("Serverbefehle:");
 			sendServerMsg("/name benutzername");
 			sendServerMsg("   neuen Benutzernamen setzen");

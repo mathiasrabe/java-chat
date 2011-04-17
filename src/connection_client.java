@@ -1,10 +1,6 @@
 import java.net.*;
 import java.io.*;
 
-import com.google.api.detect.Detect;
-import com.google.api.translate.Language;
-import com.google.api.translate.Translate;
-
 class connection_client extends Thread
 {
 	protected Socket server;

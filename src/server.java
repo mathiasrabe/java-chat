@@ -60,20 +60,31 @@ public class server implements Runnable
 		int i;
 		connection you;
 
-		for (i=0; i<connections.size(); i++)
-		{
+		for (i=0; i<connections.size(); i++) {
 			//System.out.println("Nachricht verschicken!");
 			you = (connection) connections.elementAt(i);
 			you.out.println(msg);
 		}
 	}
 	
-	public void removeconnection(connection c)
+	public Vector<String> getUserNames()
+	{
+		int i;
+		Vector<String> names = new Vector<String>( connections.size() );
+		
+		for (i=0; i < connections.size(); i++) {
+			names.addElement( (String) connections.elementAt(i).nickname );
+		}
+		
+		return names;
+	}
+	
+	public void removeConnection(connection c)
 	{
 		connections.removeElement(c);
 	}
 	
-	public boolean userexists(String name)
+	public boolean userExists(String name)
 	{
 		int i;
 		connection you;
