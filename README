@@ -1,15 +1,17 @@
-Softwareprojekt: Chatprogramm ähnlich IRC
+Softwareprojekt: Chatprogramm ähnlich IRC mit Übersetzerfunktion
+
+Features:
+-Chat mit mehreren Teilnehmern
+-Jeder Benutzer hat einen Namen
+-Hilfefunktion ( /help )
+-Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
 
 geplante Features:
--Multichatprogramm
--Server und Client
+-Übersetzungsfunktion
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
--Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
 -Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
 -Statusabfrage (Wer ist gerade online?)
 -/me Funktion
 
 Bugs:
--IP Adresse wird nicht überprüft
--Benutzernamen sind Momentan noch nutzlos
--Eingaben werden doppelt angezeigt
+-Übersetzungsfunktion nicht funktionsfähig
