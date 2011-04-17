@@ -7,7 +7,7 @@ public class server implements Runnable
 	public static final int PORT = 8765;
 	protected ServerSocket listen;
 	protected Vector<connection> connections;
-	Thread connect;
+	private volatile Thread connect;
 
 	public server()
 	{
