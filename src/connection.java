@@ -84,6 +84,18 @@ class connection extends Thread
 				System.out.println("Nickname: " + nickname);
 			}
 			// TODO hier könnten alle anderen Serverbefehle hin
+		} else if(line.startsWith("msg ")) {
+			// Mitteilung Aufteilen in Benutzer und Nachricht
+			String[] splittedString = line.substring(4).split("[\\s]", 2);
+			if (splittedString.length < 2) {
+				sendServerMsg("Nicht genügend Argumente für eine Nachricht");
+				return;
+			}
+			if (server.userExists(splittedString[0])) {
+				server.broadcast(splittedString[1], splittedString[0]);
+			} else {
+				sendServerMsg("Benutzer " + splittedString[0] + " nicht gefunden");
+			}
 		} else if(line.startsWith("who")) {
 			Vector<String> namelist = server.getUserNames();
 			if(namelist.isEmpty()) {
@@ -110,6 +122,10 @@ class connection extends Thread
 			sendServerMsg("Serverbefehle:");
 			sendServerMsg("/name benutzername");
 			sendServerMsg("   neuen Benutzernamen setzen");
+			sendServerMsg("/who");
+			sendServerMsg("   zeigt alle Benutzer an");
+			sendServerMsg("/msg benutzer nachricht");
+			sendServerMsg("   schickt nur an benutzer die nachricht");
 			sendServerMsg("/quit");
 			sendServerMsg("   Server verlassen und Client beenden");
 			sendServerMsg("/help");

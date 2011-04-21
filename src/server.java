@@ -54,6 +54,22 @@ public class server implements Runnable
 	{
 		new server();
 	}
+	
+	public void broadcast(String msg, String username)
+	{
+		int i;
+		connection you;
+		
+		msg = "Private Nachricht von " + username + ": " + msg;
+		
+		for (i=0; i<connections.size(); i++) {
+			you = (connection) connections.elementAt(i);
+			if ( you.nickname.equals( username ) ) {
+				you.out.println(msg);
+				break;
+			}
+		}
+	}
 
 	public void broadcast(String msg)
 	{

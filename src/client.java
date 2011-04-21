@@ -114,12 +114,12 @@ public class client implements Runnable
 	public void display(String line)
 	{
 		if ( !line.startsWith(username) ) {
-			String newtext = translate(line);
-			if ( !newtext.isEmpty() ) {
-				System.out.println(newtext);
-			} else {
+			// String newtext = translate(line);
+			//if ( !newtext.isEmpty() ) {
+			//	System.out.println(newtext);
+			//} else {
 				System.out.println(line);
-			}
+			//}
 		}
 	}
 }

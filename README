@@ -5,13 +5,15 @@ Features:
 -Jeder Benutzer hat einen Namen
 -Hilfefunktion ( /help )
 -Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
+-Statusabfrage (Wer ist gerade online?)
+-Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
 
 geplante Features:
 -Übersetzungsfunktion
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
--Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
--Statusabfrage (Wer ist gerade online?)
 -/me Funktion
+-Server soll verfügbare Netzwerk-Schnittstellen anzeigen
 
 Bugs:
 -Übersetzungsfunktion nicht funktionsfähig
+-Flüstern an sich selbst ist möglich
