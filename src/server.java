@@ -21,6 +21,9 @@ public class server implements Runnable
 			System.err.println("Fehler beim Erzeugen der Sockets: "+e);
 			System.exit(1);
 		}
+		
+		System.out.println("Verfügbare Netzwerkschnittstellen:");
+		showNIC();
 
 		connections = new Vector<connection>();
 
@@ -53,6 +56,29 @@ public class server implements Runnable
 	public static void main(String[] args)
 	{
 		new server();
+	}
+	
+	public static void showNIC() {
+		// http://www.informatik-blog.net/2009/01/28/informationen-der-netzwerkkarten-auslesen/
+		try {
+			Enumeration<NetworkInterface> interfaceNIC = NetworkInterface.getNetworkInterfaces();
+	        // Alle Schnittstellen durchlaufen
+			while (interfaceNIC.hasMoreElements()) {
+	            //Elemente abfragen und ausgeben
+	            NetworkInterface n = interfaceNIC.nextElement();
+	            System.out.println(String.format("Netzwerk-Interface: %s (%s)", n.getName(), n.getDisplayName()));
+	            // Adressen abrufen
+	            Enumeration<InetAddress> addresses = n.getInetAddresses();
+	            // Adressen durchlaufen
+	            while (addresses.hasMoreElements()) {
+	                InetAddress address = addresses.nextElement();
+	                System.out.println(String.format("- %s", address.getHostAddress()));
+	            }
+	            System.out.println();
+	        }
+	    } catch (SocketException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	public void broadcast(String msg, String username)
