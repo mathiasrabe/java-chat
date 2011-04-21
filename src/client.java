@@ -89,6 +89,7 @@ public class client implements Runnable
 	{
 		Translate.setHttpReferrer("moep.de"); // wozu?
 		Language lang = null;
+                Language userlang = "DE";
 		String translatedText = new String();
 		
 		// Spracherkennung
@@ -101,7 +102,7 @@ public class client implements Runnable
 		
 		//Übersetze Text
 		try {
-			translatedText = Translate.execute(text, lang, Language.ENGLISH);
+			translatedText = Translate.execute(text, lang, userlang);
 			// FIXME Alles ins Englische übersetzen? bäää...
 		} catch (Exception e) {
 			System.err.println("Fehler bei Überstzung: " + e);
