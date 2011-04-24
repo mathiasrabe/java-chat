@@ -5,6 +5,7 @@ Features:
 -Jeder Benutzer hat einen Namen
 -Hilfefunktion ( /help )
 -Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
+-Bei Anmeldung: Abfrage von Sprachkürzel (Noch nicht getestet!?)
 
 geplante Features:
 -Übersetzungsfunktion
@@ -15,4 +16,5 @@ geplante Features:
 
 Bugs:
 -Übersetzungsfunktion nicht funktionsfähig
+-Clined erkennt nicht bekantes Sprachkürzel nur, wenn es Lehrzeichen enthällt
 
