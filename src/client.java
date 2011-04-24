@@ -16,6 +16,7 @@ public class client implements Runnable
 	private volatile Thread connect;
 	private String consoleinput;
 	public String username;
+        private String userlang = "DE";
 
 	
 	public client()
@@ -31,6 +32,14 @@ public class client implements Runnable
 						           " Bitte geben Sie erneut ein:");
 			username = in.nextLine();
 		} while( username.isEmpty() || username.contains(" ") );
+		
+	System.out.println("Bitte geben Sie ein Sprachkürzel ein:");
+		do {
+			if (userlang != null && userlang.contains(" "))
+				System.out.println("Das Sprachkürzel darf kein Leerzeichen enthalten sein." +
+						           " Bitte geben Sie erneut ein:");
+			userlang = in.nextLine();
+		} while( userlang.isEmpty() || userlang.contains(" ") );
 		
 		try
 		{
@@ -89,8 +98,7 @@ public class client implements Runnable
 	{
 		Translate.setHttpReferrer("moep.de"); // wozu?
 		Language lang = null;
-                Language userlang = "DE";
-		String translatedText = new String();
+             	String translatedText = new String();
 		
 		// Spracherkennung
 		try {
