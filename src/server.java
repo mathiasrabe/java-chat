@@ -4,18 +4,18 @@ import java.util.*;
 
 public class server implements Runnable
 {
-	public static final int PORT = 8765;
+	public static int port = 8765;
 	protected ServerSocket listen;
 	protected Vector<connection> connections;
 	private volatile Thread connect;
 
 	public server()
 	{
-		System.out.println("Server wird gestartet ...");
+		System.out.println("Server wird auf Port " + port + " gestartet ...");
         
 		try
 		{
-			listen = new ServerSocket(PORT);
+			listen = new ServerSocket(port);
 		} catch (IOException e)
 		{
 			System.err.println("Fehler beim Erzeugen der Sockets: "+e);
@@ -55,6 +55,19 @@ public class server implements Runnable
 
 	public static void main(String[] args)
 	{
+		if (args.length > 0) {
+			for ( int i = 0; i < args.length - 1; i++) { // -1 da zwei argumente vorhanden sein müssen: flag und option
+				if( args[i].equals("--port")) {
+					try {
+						port = Integer.parseInt(args[i+1]);
+					} catch (NumberFormatException e) {
+						System.err.println("Portnummer ist kein Integer");
+						System.exit(1);
+					}
+				}
+			}
+		}
+		
 		new server();
 	}
 	
@@ -74,8 +87,8 @@ public class server implements Runnable
 	                InetAddress address = addresses.nextElement();
 	                System.out.println(String.format("- %s", address.getHostAddress()));
 	            }
-	            System.out.println();
 	        }
+            System.out.println();
 	    } catch (SocketException e) {
 	        e.printStackTrace();
 	    }
