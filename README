@@ -8,13 +8,13 @@ Features:
 -Statusabfrage (Wer ist gerade online?)
 -Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
 -Server zeigt verfügbare Netzwerk-Schnittstellen an
+-Server Startoption --port um Port beim Start einstellen zu können
 
 geplante Features:
 -Übersetzungsfunktion
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
 -/me Funktion
--Server soll verfügbare Netzwerk-Schnittstellen anzeigen
 
 Bugs:
 -Übersetzungsfunktion nicht funktionsfähig
--Flüstern an sich selbst ist möglich
+-Flüstern an seine eigene Person ist möglich
