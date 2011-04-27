@@ -5,12 +5,14 @@ import java.awt.event.*;
 import java.net.*;
 import java.io.*;
 
-public class client extends JFrame implements KeyListener
+public class client extends JFrame implements KeyListener, WindowListener
 {
-	public static final int PORT = 8765;
+	private int port = 8765;
+	private String ip = "localhost";
 	protected Socket socket;
 	protected BufferedReader in;
 	protected PrintStream out;
+	private boolean connected;
 	
 	protected JMenuBar menuBar;
 	protected JMenu menu;
@@ -22,6 +24,28 @@ public class client extends JFrame implements KeyListener
 	public client()
  	{
 		super("Java-Chat");
+ 		
+ 		buildGUI();
+		launchFrame();
+		
+		// Starteinstellungen abfragen und versuchen zu verbinden
+		// inkl. Fehlerbehandlung
+		do {
+			int status = showStartsettings();
+			if (status == startsettings.CANCELED) {
+				this.close();
+				System.exit(0);
+			} else if (status == startsettings.ERROR) {
+				continue;
+			}
+			connect();
+		} while (!connected);
+		outputarea.setText("");
+		waitForServer();
+ 	}
+	
+	protected void buildGUI()
+	{
  		//setSize(300,300);
  		//setLocation(300,300);
 	   
@@ -29,10 +53,10 @@ public class client extends JFrame implements KeyListener
  		getContentPane().setLayout(new BorderLayout(1, 1));
  		
  		menuBar = new JMenuBar();
- 		menu = new JMenu("A Menu");
- 		menu.setMnemonic(KeyEvent.VK_A);
+ 		menu = new JMenu("Datei");
+ 		menu.setMnemonic(KeyEvent.VK_D);
  		menu.getAccessibleContext().setAccessibleDescription(
- 		        "The only menu in this program that has menu items");
+ 		        "The only menu in this program that has menu items"); //FIXME
  		menuBar.add(menu);
  		this.setJMenuBar(menuBar);
  		
@@ -71,17 +95,20 @@ public class client extends JFrame implements KeyListener
  		sendButton = new JButton(sendAction);
  		lowerPanel.add(sendButton);
  		getContentPane().add(lowerPanel, BorderLayout.PAGE_END);
- 	}
+ 		
+ 		this.addWindowListener(this);
+	}
 	
 	protected void connect()
 	{
 		try
 		{
-			socket = new Socket( "localhost", PORT);
+			socket = new Socket( ip, port);
 		} catch (IOException e)
 		{
-			System.err.println("Verbindung fehlgeschlagen:"+ e);
-			System.exit(1);
+			print("Fehler beim Verbindungsaufbau: " + e);
+			System.err.println("Verbindung fehlgeschlagen: "+ e);
+			return;
 		}
 		
 		try
@@ -91,9 +118,12 @@ public class client extends JFrame implements KeyListener
 		} catch (IOException e)
 		{
 			try { socket.close(); } catch (IOException e2) {} ;
+			print("Fehler beim erzeugen des Streams: " + e);
 			System.err.println("Fehler beim Erzeugen der Streams: " + e);
 			return;
 		}
+		
+		connected = true;
 	}
 	
 	protected void waitForServer()
@@ -102,15 +132,11 @@ public class client extends JFrame implements KeyListener
 
 		try
 		{
-			while (true)
+			while (connected)
 			{
 				line=in.readLine();
 				if(line!=null) {
-					outputarea.setText( outputarea.getText() + line + "\n" ); //sollte dafür sorgen dass immer die unterste Zeile angezeigt wird
-					//outputarea.append(line + "\n");
-					outputarea.setCaretPosition(outputarea.getDocument().getLength());
-					//outputarea.setPreferredSize( outputarea.getPreferredScrollableViewportSize() );
-					scrollPane.revalidate();
+					print(line);
 				}
 			}
 		} catch(IOException e)
@@ -120,19 +146,58 @@ public class client extends JFrame implements KeyListener
 		}
 	}
 	
+	protected void print(String text)
+	{
+		outputarea.setText( outputarea.getText() + text + "\n" ); //sollte dafür sorgen dass immer die unterste Zeile angezeigt wird
+		outputarea.setCaretPosition(outputarea.getDocument().getLength());
+		scrollPane.revalidate();
+	}
+	
 	protected void launchFrame()
 	{
- 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);       
+ 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // this.close()    
  		pack();
  		setVisible(true);
+	}
+	
+	public void saveSettings(String ip, int port)
+	{
+		this.ip = ip;
+		this.port = port;
+	}
+	
+	/**
+	* 
+	* @return 0 wenn Eingaben gespeichert wurde, 
+	*         1 wenn abbrechen gedrückt wurde, 
+	*         2 wenn port kein integer war
+	*/
+	protected int showStartsettings()
+	{
+		startsettings s = new startsettings(this, ip, port);
+		
+		int saved = s.handleInput();
+		
+		return saved;
 	}
 
 	public static void main(String[] args)
 	{
-		client c = new client();
-		c.launchFrame();
-		c.connect();
-		c.waitForServer();
+		new client();
+	}
+	
+	public void close()
+	{
+		System.out.println("Beende chat-client");
+		print("bye bye ...");
+		if(socket != null) {
+			try {
+				socket.close();
+			} catch(IOException e) {
+				System.err.println("Fehler beim Beenden der Verbindung: " + e);
+			}
+		}
+		connected = false;
 	}
 	
 	private void sendText(String text) {
@@ -153,6 +218,35 @@ public class client extends JFrame implements KeyListener
 		if(key == KeyEvent.VK_ENTER && input != null) {
 			sendText(input);
 		}
+	}
+	
+	public void windowClosing(WindowEvent e)
+	{
+		this.close();
+	}
+	
+	public void windowDeactivated(WindowEvent e)
+	{
+	}
+	
+	public void windowDeiconified(WindowEvent e)
+	{
+	}
+	
+	public void windowOpened(WindowEvent e)
+	{
+	}
+	
+	public void windowIconified(WindowEvent e)
+	{
+	}
+	
+	public void windowClosed(WindowEvent e)
+	{
+	}
+	
+	public void windowActivated(WindowEvent e)
+	{
 	}
 	
 	private class sendAction extends AbstractAction {
