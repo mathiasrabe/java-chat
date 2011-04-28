@@ -14,6 +14,7 @@ geplante Features:
 -Übersetzungsfunktion
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
 -/me Funktion
+-client startoptionen: ip, port, benutzername
 
 Bugs:
 -Übersetzungsfunktion nicht funktionsfähig

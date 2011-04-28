@@ -94,6 +94,11 @@ public class server implements Runnable
 	    }
 	}
 	
+	/**
+	 * 
+	 * @param msg zu senende Nachricht
+	 * @param username Benutzer an den die Nachricht geschickt werden soll
+	 */
 	public void broadcast(String msg, String username)
 	{
 		int i;
@@ -110,6 +115,10 @@ public class server implements Runnable
 		}
 	}
 
+	/**
+	 * 
+	 * @param msg Sende msg an alle Teilnehmer
+	 */
 	public void broadcast(String msg)
 	{
 		int i;
@@ -119,6 +128,17 @@ public class server implements Runnable
 			//System.out.println("Nachricht verschicken!");
 			you = (connection) connections.elementAt(i);
 			you.out.println(msg);
+		}
+	}
+	
+	public void sendGlobalServerMsg(String msg)
+	{
+		int i;
+		connection you;
+		
+		for (i=0; i<connections.size(); i++) {
+			you = (connection) connections.elementAt(i);
+			you.sendServerMsg(msg);
 		}
 	}
 	
@@ -137,6 +157,7 @@ public class server implements Runnable
 	public void removeConnection(connection c)
 	{
 		connections.removeElement(c);
+		sendGlobalServerMsg("Benutzer " + c.getNickname() + " hat den Server verlassen");
 	}
 	
 	public boolean userExists(String name)
