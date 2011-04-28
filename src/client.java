@@ -2,17 +2,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.net.*;
+//import java.net.*;
 import java.io.*;
 
 public class client extends JFrame implements KeyListener, WindowListener
 {
 	private int port = 8765;
 	private String ip = "localhost";
-	protected Socket socket;
-	protected BufferedReader in;
-	protected PrintStream out;
-	private boolean connected;
+//	protected Socket socket;
+//	protected BufferedReader in;
+//	protected PrintStream out;
+	protected c_connection connection;
+	private boolean tryingToConnect;
 	
 	protected JMenuBar menuBar;
 	protected JMenu menu;
@@ -30,6 +31,7 @@ public class client extends JFrame implements KeyListener, WindowListener
 		
 		// Starteinstellungen abfragen und versuchen zu verbinden
 		// inkl. Fehlerbehandlung
+		tryingToConnect = true;
 		do {
 			int status = showStartsettings();
 			if (status == startsettings.CANCELED) {
@@ -38,10 +40,30 @@ public class client extends JFrame implements KeyListener, WindowListener
 			} else if (status == startsettings.ERROR) {
 				continue;
 			}
-			connect();
-		} while (!connected);
+			
+			// Versuche Verbindung aufzubauen
+			connection = new c_connection(ip, port, this);
+			try {
+				connection.connect();
+			} catch (IOException e) {
+				print("Fehler beim Verbindungsaufbau: " + e);
+				System.err.println("Verbindung fehlgeschlagen: "+ e);
+			}
+			if (connection.isConnected()) {
+				try {
+					connection.enableStream();
+				} catch (IOException e) {
+					print("Fehler beim erzeugen des Streams: " + e);
+					System.err.println("Fehler beim Erzeugen der Streams: " + e);
+				}
+			}
+			if (connection.isStreamable()) {
+				tryingToConnect = false;
+			}
+		} while (tryingToConnect);
+		
 		outputarea.setText("");
-		waitForServer();
+		connection.waitForServer();
  	}
 	
 	protected void buildGUI()
@@ -89,7 +111,6 @@ public class client extends JFrame implements KeyListener, WindowListener
  		inputfield.setPreferredSize(new Dimension(600, 25));
  		inputfield.addKeyListener(this);
  		lowerPanel.add(inputfield);
- 		//getContentPane().add(inputfield);
 	   
  		Action sendAction = new sendAction();
  		sendButton = new JButton(sendAction);
@@ -98,54 +119,7 @@ public class client extends JFrame implements KeyListener, WindowListener
  		
  		this.addWindowListener(this);
 	}
-	
-	protected void connect()
-	{
-		try
-		{
-			socket = new Socket( ip, port);
-		} catch (IOException e)
-		{
-			print("Fehler beim Verbindungsaufbau: " + e);
-			System.err.println("Verbindung fehlgeschlagen: "+ e);
-			return;
-		}
-		
-		try
-		{
-			in = new BufferedReader(new InputStreamReader( socket.getInputStream() ));
-			out = new PrintStream(socket.getOutputStream());
-		} catch (IOException e)
-		{
-			try { socket.close(); } catch (IOException e2) {} ;
-			print("Fehler beim erzeugen des Streams: " + e);
-			System.err.println("Fehler beim Erzeugen der Streams: " + e);
-			return;
-		}
-		
-		connected = true;
-	}
-	
-	protected void waitForServer()
-	{
-		String line;
 
-		try
-		{
-			while (connected)
-			{
-				line=in.readLine();
-				if(line!=null) {
-					print(line);
-				}
-			}
-		} catch(IOException e)
-		{
-			if (!socket.isClosed())
-				System.out.println("Fehler: " + e);
-		}
-	}
-	
 	protected void print(String text)
 	{
 		outputarea.setText( outputarea.getText() + text + "\n" ); //sollte dafür sorgen dass immer die unterste Zeile angezeigt wird
@@ -190,18 +164,18 @@ public class client extends JFrame implements KeyListener, WindowListener
 	{
 		System.out.println("Beende chat-client");
 		print("bye bye ...");
-		if(socket != null) {
-			try {
-				socket.close();
-			} catch(IOException e) {
+		
+		if (connection != null) {
+			try { 
+				connection.close();
+			} catch (IOException e) {
 				System.err.println("Fehler beim Beenden der Verbindung: " + e);
 			}
 		}
-		connected = false;
 	}
 	
 	private void sendText(String text) {
-		out.println(text);
+		connection.sendMsg(text);
 		inputfield.setText("");
 	}
 

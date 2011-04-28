@@ -73,6 +73,10 @@ public class startsettings extends JFrame {
     		System.err.println(e + " ist kein Integer");
     		return ERROR;
     	}
+    	if (port > 65535 || port < 1) {
+    		System.err.println("Poertnummer " + port + " liegt nicht zwischen 0 und 65535");
+    		return ERROR;
+    	}
     	c.saveSettings(ip, port);
 		
 		return SAVED;
