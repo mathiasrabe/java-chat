@@ -33,6 +33,8 @@ class connection extends Thread
 			newnick = "USER" + (int) (Math.random() * 1000);
 		} while( server.userExists(newnick) || newnick.equals("Server") );
 		nickname = newnick;
+		
+		server.sendGlobalServerMsg("Benutzer " + nickname + " hat den Server betreten");
 
 		connect = new Thread(this);
 		connect.start();
@@ -79,6 +81,7 @@ class connection extends Thread
 			} else if (server.userExists( newnick ) || newnick.equals("Server") ) {
 				sendServerMsg("Name schon vergeben");
 			} else {
+				server.sendGlobalServerMsg("Der Benutzer " + nickname + " hat seinen Namen in " + newnick + " geändert");
 				nickname = newnick;
 				sendServerMsg("Ihr Benutzername lautet " + nickname);
 				System.out.println("Nickname: " + nickname);
