@@ -5,18 +5,18 @@ import java.awt.event.*;
 //import java.net.*;
 import java.io.*;
 
-public class client extends JFrame implements KeyListener, WindowListener
+public class client extends JFrame implements ActionListener, KeyListener, WindowListener
 {
 	private int port = 8765;
 	private String ip = "localhost";
-//	protected Socket socket;
-//	protected BufferedReader in;
-//	protected PrintStream out;
 	protected c_connection connection;
 	private boolean tryingToConnect;
+	private boolean translate = false;
 	
 	protected JMenuBar menuBar;
 	protected JMenu menu;
+	protected JCheckBoxMenuItem transletMenuItem;
+	protected JMenuItem quitMenuItem;
 	protected JScrollPane scrollPane;
 	protected JTextArea outputarea, userlistarea;
 	protected JTextField inputfield;
@@ -78,8 +78,27 @@ public class client extends JFrame implements KeyListener, WindowListener
  		menu = new JMenu("Datei");
  		menu.setMnemonic(KeyEvent.VK_D);
  		menu.getAccessibleContext().setAccessibleDescription(
- 		        "The only menu in this program that has menu items"); //FIXME
+ 		        "Dateimenü");
  		menuBar.add(menu);
+
+ 		transletMenuItem = new JCheckBoxMenuItem("Übersetzen");
+ 		transletMenuItem.setMnemonic(KeyEvent.VK_T);
+ 		transletMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+ 				KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+ 		transletMenuItem.getAccessibleContext().setAccessibleDescription(
+			"Übersetzung (de-)aktivieren");
+ 		menu.add(transletMenuItem);
+ 		
+ 		menu.addSeparator();
+ 		
+ 		quitMenuItem = new JMenuItem("Quit", KeyEvent.VK_Q);
+ 		quitMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+		KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
+ 		quitMenuItem.getAccessibleContext().setAccessibleDescription(
+ 				"Beende Programm");
+ 		quitMenuItem.addActionListener(this);
+		menu.add(quitMenuItem);
+
  		this.setJMenuBar(menuBar);
  		
  		JPanel upperPanel = new JPanel();
@@ -129,7 +148,7 @@ public class client extends JFrame implements KeyListener, WindowListener
 	
 	protected void launchFrame()
 	{
- 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // this.close()    
+ 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // dafür haben wir windowClosing()    
  		pack();
  		setVisible(true);
 	}
@@ -172,6 +191,7 @@ public class client extends JFrame implements KeyListener, WindowListener
 				System.err.println("Fehler beim Beenden der Verbindung: " + e);
 			}
 		}
+		System.exit(0);
 	}
 	
 	private void sendText(String text) {
@@ -222,6 +242,15 @@ public class client extends JFrame implements KeyListener, WindowListener
 	public void windowActivated(WindowEvent e)
 	{
 	}
+	
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == quitMenuItem) {
+        	this.close();
+        } else if (e.getSource() == transletMenuItem) {
+        	// aktiviere Übersetzung
+        	translate = !translate;
+        }
+    }
 	
 	private class sendAction extends AbstractAction {
 		
