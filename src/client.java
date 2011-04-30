@@ -10,7 +10,8 @@ import com.google.api.translate.Translate;
 
 public class client implements Runnable
 {
-	public static final int PORT = 8765;
+	public static int port = 8765;
+	public static String ip;
 	protected Socket socket;
 	protected Scanner in;
 	private volatile Thread connect;
@@ -21,9 +22,12 @@ public class client implements Runnable
 	public client()
 	{
 		in = new Scanner(System.in);
-		System.out.println("Bitte geben Sie eine IP-Adresse ein:");
-		String input = in.nextLine();
-		// TODO Die Variable input muss auf Richtigkeit überprüft werden!
+		if (ip.isEmpty()) {
+			System.out.println("Bitte geben Sie eine IP-Adresse ein:");
+			ip = in.nextLine();
+			// TODO Die Variable input muss auf Richtigkeit überprüft werden!
+			// TODO vielleicht Abfrage weg lassen und nur mit Startoptionen arbeiten?
+		}
 		System.out.println("Bitte geben Sie Ihren Nickname ein:");
 		do {
 			if (username != null && username.contains(" "))
@@ -34,7 +38,7 @@ public class client implements Runnable
 		
 		try
 		{
-			socket = new Socket( input, PORT);
+			socket = new Socket( ip, port);
 		} catch (IOException e)
 		{
 			System.err.println("Verbindung fehlgeschlagen:"+ e);
@@ -77,6 +81,25 @@ public class client implements Runnable
 	
 	public static void main(String[] args)
 	{
+		if (args.length > 0) {
+		for ( int i = 0; i < args.length - 1; i++) { // -1 da zwei argumente vorhanden sein müssen: flag und option
+			if( args[i].equals("--port")) {
+				try {
+					port = Integer.parseInt(args[i+1]);
+				} catch (NumberFormatException e) {
+					System.err.println("Portnummer ist kein Integer");
+					System.exit(1);
+				}
+				if (port < 1 || port > 65535) {
+					System.err.println("Portnummer ist ungültig");
+					System.exit(1);
+				}
+			}
+			if( args[i].equals("--ip")) {
+				ip = args[i+1];
+			}
+		}
+	}
 		new client();
 	}
 	
