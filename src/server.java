@@ -64,6 +64,10 @@ public class server implements Runnable
 						System.err.println("Portnummer ist kein Integer");
 						System.exit(1);
 					}
+					if (port < 1 || port > 65535) {
+						System.err.println("Portnummer ist ungültig");
+						System.exit(1);
+					}
 				}
 			}
 		}
