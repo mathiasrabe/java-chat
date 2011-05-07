@@ -9,6 +9,10 @@ public class server implements Runnable
 	protected Vector<connection> connections;
 	private volatile Thread connect;
 
+	/**
+	 * Initialisierung
+	 * Port öffnen, Netzwerkschnittstellen anzeigen & Thread starten
+	 */
 	public server()
 	{
 		System.out.println("Server wird auf Port " + port + " gestartet ...");
@@ -33,6 +37,10 @@ public class server implements Runnable
 	
 	//public void done()
 
+	/**
+	 * Thread-Rutine
+	 * Eingehenden Verbindungen einen connection-thread zuweisen
+	 */
 	public void run()
 	{
 		try
@@ -53,6 +61,13 @@ public class server implements Runnable
 		}
 	}
 
+	/**
+	 * main-schleife
+	 * Startargumente überprüfen
+	 * initalisierung aufrufen
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		if (args.length > 0) {
@@ -75,8 +90,12 @@ public class server implements Runnable
 		new server();
 	}
 	
+	/**
+	 * Netzwerkschnittstellen auflisten
+	 * danke an:
+	 * http://www.informatik-blog.net/2009/01/28/informationen-der-netzwerkkarten-auslesen/
+	 */
 	public static void showNIC() {
-		// http://www.informatik-blog.net/2009/01/28/informationen-der-netzwerkkarten-auslesen/
 		try {
 			Enumeration<NetworkInterface> interfaceNIC = NetworkInterface.getNetworkInterfaces();
 	        // Alle Schnittstellen durchlaufen
@@ -99,7 +118,7 @@ public class server implements Runnable
 	}
 	
 	/**
-	 * 
+	 * Nachricht an bestimmten User schicken
 	 * @param msg zu senende Nachricht
 	 * @param username Benutzer an den die Nachricht geschickt werden soll
 	 */
@@ -120,8 +139,8 @@ public class server implements Runnable
 	}
 
 	/**
-	 * 
-	 * @param msg Sende msg an alle Teilnehmer
+	 * Nachricht an alle User schicken
+	 * @param msg
 	 */
 	public void broadcast(String msg)
 	{
@@ -135,6 +154,10 @@ public class server implements Runnable
 		}
 	}
 	
+	/**
+	 * Servernachricht an alle User schicken
+	 * @param msg
+	 */
 	public void sendGlobalServerMsg(String msg)
 	{
 		int i;
@@ -146,6 +169,10 @@ public class server implements Runnable
 		}
 	}
 	
+	/**
+	 * Liefert alle Benutzernamen
+	 * @return Vector of usernames
+	 */
 	public Vector<String> getUserNames()
 	{
 		int i;
@@ -158,12 +185,21 @@ public class server implements Runnable
 		return names;
 	}
 	
+	/**
+	 * Löscht Connectionthread aus Liste
+	 * @param c
+	 */
 	public void removeConnection(connection c)
 	{
 		connections.removeElement(c);
 		sendGlobalServerMsg("Benutzer " + c.getNickname() + " hat den Server verlassen");
 	}
 	
+	/**
+	 * testet ob Benutzer existiert
+	 * @param name zu testender Benutzername
+	 * @return true if user exists or false
+	 */
 	public boolean userExists(String name)
 	{
 		int i;

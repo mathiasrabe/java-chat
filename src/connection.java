@@ -11,6 +11,13 @@ class connection extends Thread
 	protected String nickname;
 	private volatile Thread connect;
 
+	/**
+	 * Initialisierung
+	 * baut Streams zum client auf und generiert zufälligen Benutzernamen
+	 *  
+	 * @param server Eltern-Klasse
+	 * @param client socket zum client
+	 */
 	public connection(server server, Socket client)
 	{
 		this.server=server;
@@ -40,16 +47,27 @@ class connection extends Thread
 		connect.start();
 	}
 	
+	/**
+	 * Schickt Servernachricht an Benutzer
+	 * @param line
+	 */
 	public void sendServerMsg(String line)
 	{
 		out.println("Server: "+ line);
 	}
 	
+	/**
+	 * liefert Benutzernamen
+	 * @return
+	 */
 	public String getNickname()
 	{
 		return nickname;
 	}
 	
+	/**
+	 * beendet Verbindung und Thread
+	 */
 	public void done()
 	{
 		// Zeugs um Thread zu stoppen
@@ -69,8 +87,8 @@ class connection extends Thread
 	}
 	
 	/**
-	 * 
-	 * @param line String mit zu überprüfender Optionen - Slash am Anfang entfernen
+	 * Filtert einen String nach evtl. vorhandenen Befehlen
+	 * @param line String mit zu überprüfender Optionen - Slash am Anfang entfernen!
 	 */
 	private void filterOptions( String line)
 	{
@@ -138,6 +156,10 @@ class connection extends Thread
 		}
 	}
 
+	/**
+	 * Thread-Rutine
+	 * Wartet auf Anfragen vom Client
+	 */
 	public void run()
 	{
 		String line;
