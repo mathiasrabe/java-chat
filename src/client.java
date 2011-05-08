@@ -19,6 +19,10 @@ public class client implements Runnable
 	public String username;
 
 	
+	/**
+	 * Initialisierung
+	 * Verbindung aufbauen
+	 */
 	public client()
 	{
 		in = new Scanner(System.in);
@@ -49,6 +53,9 @@ public class client implements Runnable
 		connect.start();
 	}
 	
+	/**
+	 * Beenden
+	 */
 	public void done()
 	{
 		// Zeugs um Thread zu stoppen
@@ -57,6 +64,9 @@ public class client implements Runnable
 		moribund.interrupt();
 	}
 	
+	/**
+	 * Wartet auf Konsoleneingabe
+	 */
 	public void run()
 	{		
 		connection_client c = new connection_client(socket, this, username);
@@ -79,6 +89,10 @@ public class client implements Runnable
 		System.out.println("bye bye ...");
 	}
 	
+	/**
+	 * Überprüfung der Startparameter
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		if (args.length > 0) {
@@ -134,6 +148,10 @@ public class client implements Runnable
 		
 	}
 	
+	/**
+	 * Zeige String in der Konsole an
+	 * @param line
+	 */
 	public void display(String line)
 	{
 		if ( !line.startsWith(username) ) {

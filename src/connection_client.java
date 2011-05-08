@@ -9,6 +9,13 @@ class connection_client extends Thread
 	protected client client;
 	private volatile Thread connect;
 	
+	/**
+	 * Initialisierung
+	 * Aufbauen von Streams
+	 * @param server socket zum Server
+	 * @param client parent von dieser Klasse
+	 * @param username Benutzername
+	 */
 	public connection_client(Socket server, client client, String username)
 	{
 		this.server=server;
@@ -32,6 +39,9 @@ class connection_client extends Thread
 		connect.start();
 	}
 	
+	/**
+	 * Beenden
+	 */
 	public void done()
 	{
 		// Zeugs um Thread zu stoppen
@@ -47,6 +57,9 @@ class connection_client extends Thread
 		moribund.interrupt();
 	}
 	
+	/**
+	 * auf Server lauschen
+	 */
 	public void run()
 	{
 		String line;
