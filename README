@@ -1,5 +1,6 @@
 Softwareprojekt: Chatprogramm ähnlich IRC mit Übersetzerfunktion
 
+Ändern der Sprache: 2 Möglichkeiten implementiert aber noch nicht getestet.
 Features:
 -Chat mit mehreren Teilnehmern
 -Jeder Benutzer hat einen Namen
