@@ -70,12 +70,12 @@ public class client implements Runnable
 			
                 // Sprache ändern 1.Möglichkeit
  
-                if(consoleinput.startsWith("sp")) {
+                if(consoleinput.startsWith("sp ")) {
                 do {
-			       if (consoleinput.substring(5)!= null && userlang.contains(" "))
-			       System.out.println("Das Sprachkürzel darf kein Leerzeichen enthalten sein."             
+			       if (consoleinput.substring(3)!= null && userlang.contains(" "))
+			       System.out.println("Die Sprache darf kein Leerzeichen enthalten sein."             
                                + " Bitte geben Sie erneut ein:");
-			       userlang = consoleinput.substring(5);
+			       userlang = consoleinput.substring(3);
 		        } while( userlang.isEmpty() || userlang.contains(" ") );
 
                }
@@ -131,7 +131,7 @@ public class client implements Runnable
 		//Übersetze Text
 		try {
 			translatedText = Translate.execute(text, lang, userlang);
-			// FIXME Alles ins Englische übersetzen? bäää...
+			
 		} catch (Exception e) {
 			System.err.println("Fehler bei Überstzung: " + e);
 		}
