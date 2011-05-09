@@ -33,14 +33,7 @@ public class client implements Runnable
 			username = in.nextLine();
 		} while( username.isEmpty() || username.contains(" ") );
 		
-	System.out.println("Bitte geben Sie ein Sprachkürzel ein:");
-		do {
-			if (userlang != null && userlang.contains(" "))
-				System.out.println("Das Sprachkürzel darf kein Leerzeichen enthalten sein." +
-						           " Bitte geben Sie erneut ein:");
-			userlang = in.nextLine();
-		} while( userlang.isEmpty() || userlang.contains(" ") );
-		
+
 		try
 		{
 			socket = new Socket( input, PORT);
@@ -75,6 +68,18 @@ public class client implements Runnable
 						
 			c.out.println( consoleinput );
 			
+                // Sprache ändern
+                if(consoleinput.matches("/sp")) {
+
+	                System.out.println("Bitte geben Sie ein Sprachkürzel ein:");
+		        do {
+			       if (userlang != null && userlang.contains(" "))
+			       System.out.println("Das Sprachkürzel darf kein Leerzeichen enthalten sein."             
+                               + " Bitte geben Sie erneut ein:");
+			       userlang = in.nextLine();
+		        } while( userlang.isEmpty() || userlang.contains(" ") );
+
+               }
 			if(consoleinput.matches("/quit")) {
 				//alle Threads beenden
 				c.done();
