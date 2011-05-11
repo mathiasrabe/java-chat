@@ -67,21 +67,8 @@ public class client implements Runnable
 			consoleinput = in.nextLine();
 						
 			c.out.println( consoleinput );
-			
-                // Sprache ändern 1.Möglichkeit
- 
-                if(consoleinput.startsWith("sp ")) {
-                do {
-			       if (consoleinput.substring(3)!= null && userlang.contains(" "))
-			       System.out.println("Die Sprache darf kein Leerzeichen enthalten sein."             
-                               + " Bitte geben Sie erneut ein:");
-			       userlang = consoleinput.substring(3);
-		        } while( userlang.isEmpty() || userlang.contains(" ") );
-
-               }
-           
-
-              // Sprache ändern 2.Möglichkeit
+	
+               // Sprache ändern 1.Möglichkeit
                 if(consoleinput.matches("/sp")) {
 
 	                System.out.println("Bitte geben Sie ein Sprachkürzel ein:");
@@ -90,6 +77,18 @@ public class client implements Runnable
 			       System.out.println("Das Sprachkürzel darf kein Leerzeichen enthalten sein."             
                                + " Bitte geben Sie erneut ein:");
 			       userlang = in.nextLine();
+		        } while( userlang.isEmpty() || userlang.contains(" ") );
+
+               }
+					
+                // Sprache ändern 2.Möglichkeit
+ 
+                if(consoleinput.startsWith("sp ")) {
+                do {
+			       if (consoleinput.substring(3)!= null && userlang.contains(" "))
+			       System.out.println("Die Sprache darf kein Leerzeichen enthalten sein."             
+                               + " Bitte geben Sie erneut ein:");
+			       userlang = consoleinput.substring(3);
 		        } while( userlang.isEmpty() || userlang.contains(" ") );
 
                }
