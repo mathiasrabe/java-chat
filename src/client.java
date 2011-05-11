@@ -85,7 +85,7 @@ public class client implements Runnable
  
                 if(consoleinput.startsWith("sp ")) {
                 do {
-			       if (consoleinput.substring(3)!= null || consoleinput.substring(3).contains(" "))
+			       if (consoleinput.substring(3)== null || consoleinput.substring(3).contains(" "))
 			       System.out.println("Die Sprache darf kein Leerzeichen enthalten sein."             
                                + " Bitte geben Sie erneut ein:");
 			       userlang = consoleinput.substring(3);
