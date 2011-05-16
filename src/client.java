@@ -26,12 +26,9 @@ public class client implements Runnable
 	public client()
 	{
 		in = new Scanner(System.in);
-		if (ip.isEmpty()) {
-			System.out.println("Bitte geben Sie eine IP-Adresse ein:");
-			ip = in.nextLine();
-			// TODO Die Variable input muss auf Richtigkeit überprüft werden!
-			// TODO vielleicht Abfrage weg lassen und nur mit Startoptionen arbeiten?
-		}
+		System.out.println("Bitte geben Sie eine IP-Adresse ein:");
+		ip = in.nextLine();
+		// TODO Die Variable input muss auf Richtigkeit überprüft werden!
 		System.out.println("Bitte geben Sie Ihren Nickname ein:");
 		do {
 			if (username != null && username.contains(" "))
@@ -109,9 +106,9 @@ public class client implements Runnable
 					System.exit(1);
 				}
 			}
-			if( args[i].equals("--ip")) {
-				ip = args[i+1];
-			}
+			//if( args[i].equals("--ip")) {
+			//	ip = args[i+1];
+			//}
 		}
 	}
 		new client();
