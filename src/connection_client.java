@@ -70,8 +70,10 @@ class connection_client extends Thread
 			while (connect == thisThread)
 			{
 				line=in.readLine();
-				if(line!=null)					
-					client.display(line);
+				if(line == null)
+					continue;
+				
+				client.display(line);
 			}
 		} catch(IOException e)
 		{

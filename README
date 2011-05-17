@@ -2,7 +2,7 @@ Softwareprojekt: Chatprogramm ähnlich IRC mit Übersetzerfunktion
 
 Features:
 -Chat mit mehreren Teilnehmern
--Jeder Benutzer hat einen Namen
+-Jeder Benutzer hat einen Namen und ein uid
 -Hilfefunktion ( /help )
 -Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
 -Statusabfrage (Wer ist gerade online?)
@@ -12,10 +12,16 @@ Features:
 
 geplante Features:
 -Übersetzungsfunktion
+
+Features die wohl nie umgesetzt werden:
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
 -/me Funktion
 -client startoptionen: ip, port, benutzername
 
 Bugs:
--Übersetzungsfunktion nicht funktionsfähig
+-Übersetzungsfunktion nicht funktionsfähig (Option ClientLanguage wird nie gesetzt!)
 -Flüstern an seine eigene Person ist möglich
+-Konsoleneingabe kann durch Nachrichten der anderen gestört werden
+-unvorhergesehenes Verhalten, wenn jemand am anfang < schreibt
+-Private Nachrichten werden nicht im Server-Log angezeigt
+-Der Nachrichtenheader wird nicht korrekt gefiltert wenn er nicht der Vorgabe entspricht

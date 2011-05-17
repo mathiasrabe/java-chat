@@ -27,8 +27,28 @@ public class TranslationEngine {
 		TU = null;
 	}
 	
+	public boolean userExists(int uid) {
+		TranslationUser you;
+		
+		for (int i = 0; i < users.size(); i++) {
+			you = (TranslationUser) users.elementAt(i);
+			if ( you.getUid() == uid ) {
+				return true;
+			}
+				
+		}
+		return false;
+	}
+	
 	public void setClientLanguage(String lang) {
 		this.clientLang = Language.fromString(lang);
+	}
+	
+	public boolean isClientLanguageSet() {
+		if (clientLang == null) {
+			return false;
+		}
+		return true;
 	}
 	
 	public String getClientLanguage() {

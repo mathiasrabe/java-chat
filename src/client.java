@@ -1,12 +1,8 @@
 import java.net.*;
-import java.util.*; //Bib für Eingabe über Konsole & Vector
+import java.util.*; //Lib für Eingabe über Konsole & Vector
 
 //import java.util.Vector;
 import java.io.*;
-
-import com.google.api.detect.Detect;
-import com.google.api.translate.Language;
-import com.google.api.translate.Translate;
 
 public class client implements Runnable
 {
@@ -17,6 +13,7 @@ public class client implements Runnable
 	private volatile Thread connect;
 	private String consoleinput;
 	public String username;
+	private TranslationEngine translateng;
 
 	
 	/**
@@ -46,6 +43,7 @@ public class client implements Runnable
 			System.exit(1);
 		}
 		
+		translateng = new TranslationEngine();
 		connect = new Thread(this);
 		connect.start();
 	}
@@ -115,49 +113,35 @@ public class client implements Runnable
 	}
 	
 	/**
-	 * 
-	 * @param text der zu übersetzende Text
-	 * @return übersetzer Text, oder leerer String, wenn nicht erfolgreich
-	 */
-	private String translate(String text)
-	{
-		Translate.setHttpReferrer("moep.de"); // wozu?
-		Language lang = null;
-		String translatedText = new String();
-		
-		// Spracherkennung
-		try {
-			lang = Detect.execute(text).getLanguage();
-		} catch (Exception e) {
-			System.err.println("Fehler bei Spracherkennung: " + e);
-			return translatedText;
-		}
-		
-		//Übersetze Text
-		try {
-			translatedText = Translate.execute(text, lang, Language.ENGLISH);
-			// FIXME Alles ins Englische übersetzen? bäää...
-		} catch (Exception e) {
-			System.err.println("Fehler bei Überstzung: " + e);
-		}
-		
-		return translatedText;
-		
-	}
-	
-	/**
-	 * Zeige String in der Konsole an
+	 * Zeige String in der Konsole, finde Optionen und übersetze ihn evtl.
 	 * @param line
 	 */
 	public void display(String line)
 	{
-		if ( !line.startsWith(username) ) {
-			// String newtext = translate(line);
-			//if ( !newtext.isEmpty() ) {
-			//	System.out.println(newtext);
-			//} else {
-				System.out.println(line);
-			//}
-		}
+		if (line.startsWith("<")) {
+			int endindex = line.indexOf(">");
+			String options = line.substring(1, endindex);
+			//System.out.println("Options: " + options);
+			//FIXME funktioniert nur wenn wirklich nur und wirklich nur die uid geschickt wird!
+			int evenindex = options.indexOf("=");
+			int uid = Integer.parseInt( line.substring(evenindex+2, options.length()+1) ); //keine Ahnung warum +2 und +1 ...
+			//String uid = line.substring(evenindex+2, options.length()+1);
+			//System.out.println("uid: " + uid);
+			
+			line = line.substring(endindex+1, line.length()); // Header entfernen
+			if (uid == 0) {
+				line = "Server: " + line;
+			} else if ( translateng.isClientLanguageSet() ) { //Übersetzung!
+				if ( !translateng.userExists(uid) ) {
+					translateng.addUser(uid);
+				}
+				String newline = translateng.translate(uid, line);
+				if (newline != null) {
+					line = newline;
+				}
+			}
+		}		
+		
+		System.out.println(line);
 	}
 }

@@ -50,8 +50,13 @@ public class server implements Runnable
 				Socket client=listen.accept();
 				
 				System.out.println("Eingehende Verbindung...");
+				
+				int uid;
+				do {
+					uid = (int) (Math.random() * 1000);
+				} while( userExists(uid) );
 
-				connection c = new connection(this, client);
+				connection c = new connection(this, client, uid);
 				connections.addElement(c);
 			}
 		} catch (IOException e)
@@ -121,17 +126,19 @@ public class server implements Runnable
 	 * Nachricht an bestimmten User schicken
 	 * @param msg zu senende Nachricht
 	 * @param username Benutzer an den die Nachricht geschickt werden soll
+	 * @param uid uid des Benutzers der die Nachricht verschickt
 	 */
-	public void broadcast(String msg, String username)
+	public void broadcast(String msg, String username, int uid)
 	{
 		int i;
 		connection you;
 		
-		msg = "Private Nachricht von " + username + ": " + msg;
+		String header =  "<uid=" + uid + ">";
+		msg = header + "Private Nachricht von " + username + ": " + msg;
 		
 		for (i=0; i<connections.size(); i++) {
 			you = (connection) connections.elementAt(i);
-			if ( you.nickname.equals( username ) ) {
+			if ( you.getNickname().equals(username) ) {
 				you.out.println(msg);
 				break;
 			}
@@ -141,15 +148,21 @@ public class server implements Runnable
 	/**
 	 * Nachricht an alle User schicken
 	 * @param msg
+	 * @param uid uid des Benutzers der die Nachricht verschickt
 	 */
-	public void broadcast(String msg)
+	public void broadcast(String msg, int uid)
 	{
 		int i;
 		connection you;
+		
+		String header =  "<uid=" + uid + ">";
+		msg = header + msg;
 
 		for (i=0; i<connections.size(); i++) {
 			//System.out.println("Nachricht verschicken!");
 			you = (connection) connections.elementAt(i);
+			if (you.getUid() == uid)
+				continue;
 			you.out.println(msg);
 		}
 	}
@@ -193,6 +206,29 @@ public class server implements Runnable
 	{
 		connections.removeElement(c);
 		sendGlobalServerMsg("Benutzer " + c.getNickname() + " hat den Server verlassen");
+	}
+	
+	/**
+	 * testet ob Benutzer existiert
+	 * @param uid zu testende uid des Benutzers
+	 * @return true if user exists or false
+	 */
+	public boolean userExists(int uid)
+	{
+		if (uid == 0)
+			return true; // 0 ist für Server reserviert
+		
+		int i;
+		connection you;
+
+		for (i=0; i<connections.size(); i++)
+		{
+			you = (connection) connections.elementAt(i);
+			if( you.getUid() == uid ) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**

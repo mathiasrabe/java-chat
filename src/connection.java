@@ -9,6 +9,7 @@ class connection extends Thread
 	protected PrintStream out;
 	protected server server;
 	protected String nickname;
+	protected int uid;
 	private volatile Thread connect;
 
 	/**
@@ -18,10 +19,11 @@ class connection extends Thread
 	 * @param server Eltern-Klasse
 	 * @param client socket zum client
 	 */
-	public connection(server server, Socket client)
+	public connection(server server, Socket client, int uid)
 	{
 		this.server=server;
 		this.client=client;
+		this.uid = uid;
 
 		try
 		{
@@ -35,11 +37,7 @@ class connection extends Thread
 		}
 		
 		// zufälligen Benutzernamen erstellen und testen ob schon vorhanden
-		String newnick;
-		do {
-			newnick = "USER" + (int) (Math.random() * 1000);
-		} while( server.userExists(newnick) || newnick.equals("Server") );
-		nickname = newnick;
+		nickname = "USER" + uid;
 		
 		server.sendGlobalServerMsg("Benutzer " + nickname + " hat den Server betreten");
 
@@ -53,7 +51,9 @@ class connection extends Thread
 	 */
 	public void sendServerMsg(String line)
 	{
-		out.println("Server: "+ line);
+		//out.println("Server: "+ line);
+		String header = "<uid=0>";
+		out.println(header + line);
 	}
 	
 	/**
@@ -63,6 +63,15 @@ class connection extends Thread
 	public String getNickname()
 	{
 		return nickname;
+	}
+	
+	/**
+	 * Liefert uid
+	 * @return
+	 */
+	public int getUid()
+	{
+		return uid;
 	}
 	
 	/**
@@ -104,7 +113,6 @@ class connection extends Thread
 				sendServerMsg("Ihr Benutzername lautet " + nickname);
 				System.out.println("Nickname: " + nickname);
 			}
-			// TODO hier könnten alle anderen Serverbefehle hin
 		} else if(line.startsWith("msg ")) {
 			// Mitteilung Aufteilen in Benutzer und Nachricht
 			String[] splittedString = line.substring(4).split("[\\s]", 2);
@@ -113,7 +121,7 @@ class connection extends Thread
 				return;
 			}
 			if (server.userExists(splittedString[0])) {
-				server.broadcast(splittedString[1], splittedString[0]);
+				server.broadcast(splittedString[1], splittedString[0], uid);
 			} else {
 				sendServerMsg("Benutzer " + splittedString[0] + " nicht gefunden");
 			}
@@ -184,7 +192,7 @@ class connection extends Thread
 				filterOptions( line.substring(1) );
 			} else {
 				System.out.println(nickname + ": " + line); //könnte gelöscht werden
-				server.broadcast(nickname + ": " + line);
+				server.broadcast(nickname + ": " + line, uid);
 			}
 		}
 	}
