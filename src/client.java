@@ -72,13 +72,40 @@ public class client implements Runnable
 		while (connect == thisThread) {
 			//Abfrage der Konsoleneingabe
 			consoleinput = in.nextLine();
-						
-			c.out.println( consoleinput );
 			
 			if(consoleinput.matches("/quit")) {
-				//alle Threads beenden
+				//alle Threads beenden						
+				c.out.println( consoleinput );
 				c.done();
 				this.done();
+			}
+			if (consoleinput.startsWith("/setlang")) {
+				//Übersetzung einschalten
+				if (consoleinput.length() < 9) {
+					// erhalte aktuelle Sprache
+					String clang = translateng.getClientLanguage();
+					if (clang == null) {
+						display("Keine Übersetzung aktiviert");
+					} else {
+						display("Übersetzung nach " + clang + " aktiviert");
+					}
+				} else {
+					//neue Sprache speichern
+					String lang = consoleinput.substring(9);
+					if (lang.equals("off")) {
+						// Übersetzung ausschalten
+						translateng.setClientLanguage(null);
+						display("Übersetzung deaktiviert");
+						continue;
+					}
+					System.out.println(lang);
+					translateng.setClientLanguage(lang);
+					if (translateng.getClientLanguage() == null) {
+						display("Sprache " + lang + " nicht verfügbar");
+					}
+				}
+			} else {
+				c.out.println( consoleinput );
 			}
 		}
 		System.out.println("bye bye ...");
@@ -118,29 +145,32 @@ public class client implements Runnable
 	 */
 	public void display(String line)
 	{
+		int uid;
+		
+		//Optionen herausfiltern
 		if (line.startsWith("<")) {
 			int endindex = line.indexOf(">");
 			String options = line.substring(1, endindex);
-			//System.out.println("Options: " + options);
-			//FIXME funktioniert nur wenn wirklich nur und wirklich nur die uid geschickt wird!
+			//FIXME funktioniert nur wenn wirklich nur, und wirklich nur, die uid geschickt wird!
 			int evenindex = options.indexOf("=");
-			int uid = Integer.parseInt( line.substring(evenindex+2, options.length()+1) ); //keine Ahnung warum +2 und +1 ...
-			//String uid = line.substring(evenindex+2, options.length()+1);
-			//System.out.println("uid: " + uid);
+			uid = Integer.parseInt( line.substring(evenindex+2, options.length()+1) ); //keine Ahnung warum +2 und +1 ...
 			
-			line = line.substring(endindex+1, line.length()); // Header entfernen
+			line = line.substring(endindex+1); // Header entfernen line.length()
 			if (uid == 0) {
 				line = "Server: " + line;
-			} else if ( translateng.isClientLanguageSet() ) { //Übersetzung!
-				if ( !translateng.userExists(uid) ) {
-					translateng.addUser(uid);
-				}
-				String newline = translateng.translate(uid, line);
-				if (newline != null) {
-					line = newline;
-				}
 			}
-		}		
+		} else {
+			uid = 0;
+		}
+		if ( translateng.isClientLanguageSet() ) { //Übersetzung!
+			if ( !translateng.userExists(uid) ) {
+				translateng.addUser(uid);
+			}
+			String newline = translateng.translate(uid, line);
+			if (newline != null) {
+				line = newline;
+			}
+		}
 		
 		System.out.println(line);
 	}

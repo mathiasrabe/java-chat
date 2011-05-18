@@ -19,9 +19,10 @@ Features die wohl nie umgesetzt werden:
 -client startoptionen: ip, port, benutzername
 
 Bugs:
--Übersetzungsfunktion nicht funktionsfähig (Option ClientLanguage wird nie gesetzt!)
+-Übersetzungsfunktion dürfte einige (um nicht zu sagen ganz viele) Bugs haben
 -Flüstern an seine eigene Person ist möglich
 -Konsoleneingabe kann durch Nachrichten der anderen gestört werden
 -unvorhergesehenes Verhalten, wenn jemand am anfang < schreibt
 -Private Nachrichten werden nicht im Server-Log angezeigt
--Der Nachrichtenheader wird nicht korrekt gefiltert wenn er nicht der Vorgabe entspricht
+-Der Nachrichtenheader wird nicht korrekt gefiltert wenn er nicht der Vorgabe <uid=4321> entspricht
+-Benutzer uids werden in TranslationUser.java nie gelöscht

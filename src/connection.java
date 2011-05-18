@@ -155,6 +155,8 @@ class connection extends Thread
 			sendServerMsg("   zeigt alle Benutzer an");
 			sendServerMsg("/msg benutzer nachricht");
 			sendServerMsg("   schickt nur an benutzer die nachricht");
+			sendServerMsg("/setlang de");
+			sendServerMsg("   (de-)aktiviert übersetzung");
 			sendServerMsg("/quit");
 			sendServerMsg("   Server verlassen und Client beenden");
 			sendServerMsg("/help");

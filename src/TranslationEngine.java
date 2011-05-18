@@ -40,8 +40,16 @@ public class TranslationEngine {
 		return false;
 	}
 	
-	public void setClientLanguage(String lang) {
-		this.clientLang = Language.fromString(lang);
+	public String setClientLanguage(String lang) {
+		if (lang == null) {
+			this.clientLang = null;
+		} else {
+			this.clientLang = Language.fromString(lang);
+		}
+		if (clientLang == null) {
+			return null;
+		}
+		return clientLang.toString();
 	}
 	
 	public boolean isClientLanguageSet() {
@@ -52,6 +60,9 @@ public class TranslationEngine {
 	}
 	
 	public String getClientLanguage() {
+		if (clientLang == null) {
+			return null;
+		}
 		return clientLang.toString();
 	}
 	
