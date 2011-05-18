@@ -1,3 +1,10 @@
+/* Java Chat
+ * (C) 2010 
+ * Mathias Rabe, Benjamin Lesky, Sebastian Stock, Michael Götz, Andreas Gröger
+ *
+ * This code is licenced under the GPL v3.
+ */
+
 import java.net.*;
 import java.io.*;
 import java.util.*;

@@ -2,6 +2,7 @@ Softwareprojekt: Chatprogramm ähnlich IRC mit Übersetzerfunktion
 
 Features:
 -Chat mit mehreren Teilnehmern
+-Übersetzungsfunktion
 -Jeder Benutzer hat einen Namen und ein uid
 -Hilfefunktion ( /help )
 -Bei Anmeldung: Abfrage von Server-IP und Benutzernamen
@@ -9,9 +10,6 @@ Features:
 -Flüstern (persönlicher Nachrichtenversand an spezielle Adressanten möglich)
 -Server zeigt verfügbare Netzwerk-Schnittstellen an
 -Server Startoption --port um Port beim Start einstellen zu können
-
-geplante Features:
--Übersetzungsfunktion
 
 Features die wohl nie umgesetzt werden:
 -Benutzer mit Sonderrechten (Operator) (Recht Mitglieder zu kicken)
